@@ -1,13 +1,31 @@
-from fastapi import FastAPI
+import flet as ft
+import services.livsmedelsverket_client as livsmedelsverket_client
 
-app = FastAPI()
+db_client = livsmedelsverket_client.LivsmedelsverketClient()
+
+def main(page: ft.Page):
+    page.title = "Livsmedelsverket DB search"
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.MainAxisAlignment.CENTER
+
+    results_view = ft.Column()
+
+    def update_results(e):
+        query = input.value
+        results = db_client.search_foods_by_name(query)
+        results_view.controls = [ft.Text(value=r["Livsmedelsnamn"]) for r in results]
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+    input = ft.TextField(value="", text_align=ft.TextAlign.RIGHT, width=400, hint_text="Sök", on_change=update_results)
 
+    page.add(
+        ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls = [
+                input
+            ]
+        ),
+        results_view
+    )
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+ft.run(main)
