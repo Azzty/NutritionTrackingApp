@@ -7,7 +7,7 @@ class LivsmedelsverketClient:
         self.livsmedelsverket_conn = sqlite3.connect(ROOT_DIR / 'res/livsmedelsverket.db')
         self.livsmedelsverket_conn.row_factory = sqlite3.Row
 
-    def get_food(self, number):
+    def get_food_by_number(self, number):
         with self.livsmedelsverket_conn as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM livsmedelsverket WHERE Livsmedelsnummer = ?", (number,))
