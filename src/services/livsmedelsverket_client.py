@@ -1,5 +1,5 @@
 import sqlite3
-from dataclasses import dataclass
+from text_unidecode import unidecode
 
 from config import ROOT_DIR
 from rapidfuzz import fuzz
@@ -9,19 +9,33 @@ def fuzzy_match(query:str, db_value:str):
     db_value = db_value.lower().strip()
     return fuzz.WRatio(query, db_value)
 
-# Assigns higher values to db_values with full query as substr and that start or end with query
-def advanced_fuzzy_match(query:str, db_value:str):
-    query = query.lower().strip()
-    db_value = db_value.lower().strip()
+# Smarter search for more intuitive results
+def advanced_fuzzy_match(query:str, db_name:str, db_group: str | None = None):
+    if query is None or db_name is None or query == "":
+        return 0
 
-    base_score = fuzz.WRatio(query, db_value)
+    query = unidecode(query.lower().strip())
+    db_name = unidecode(db_name.lower().strip())
+    db_group = unidecode(db_group.lower().strip()) if db_group is not None else ''
 
-    # Prioritize items that start or end with query
-    if db_value.startswith(query) or db_value.endswith(query):
+    query_words = query.split()
+    db_name_words = set(db_name.split())
+    db_group_words = set(db_group.split())
+
+    base_score = fuzz.WRatio(query, db_name)
+
+    # Boost items that start with word in query
+    if any(db_name.startswith(word) for word in query_words):
         base_score += 20
-    # Prioritize items with exact query as substr
-    if f" {query} " in db_value:
+    # Boost items that end with query
+    if any(db_name.endswith(word) for word in query_words):
         base_score += 10
+    # Boost items with all query words as substr
+    if all(word in db_name_words for word in query_words):
+        base_score += 15
+    # Boost items with associated group in query
+    if any(word in db_group_words for word in query_words):
+        base_score += 70
 
     return base_score
 
@@ -58,8 +72,8 @@ class LivsmedelsverketClient:
     def __init__(self):
         self.livsmedelsverket_conn = sqlite3.connect(ROOT_DIR / 'res/livsmedelsverket.db')
         self.livsmedelsverket_conn.row_factory = sqlite3.Row
-        self.livsmedelsverket_conn.create_function('FUZZ', 2, fuzzy_match)
-        self.livsmedelsverket_conn.create_function('ADV_FUZZ', 2, advanced_fuzzy_match)
+        self.livsmedelsverket_conn.create_function('FUZZ', 2, fuzzy_match, deterministic=True)
+        self.livsmedelsverket_conn.create_function('ADV_FUZZ', 3, advanced_fuzzy_match, deterministic=True)
 
     def get_food_by_id(self, db_id):
         with self.livsmedelsverket_conn as conn:
@@ -82,7 +96,7 @@ class LivsmedelsverketClient:
     def search_foods_by_name(self, query, limit=20):
         with self.livsmedelsverket_conn as conn:
             sql = """
-            SELECT *, ADV_FUZZ(?, Food_Name) as score
+            SELECT *, ADV_FUZZ(?, Food_Name, Filter_group) as score
             FROM livsmedelsverket
             WHERE score >= 70
             ORDER BY score DESC
