@@ -96,8 +96,11 @@ class LivsmedelsverketClient:
     def search_foods_by_name(self, query, limit=20):
         with self.livsmedelsverket_conn as conn:
             sql = """
-            SELECT *, ADV_FUZZ(?, Food_Name, Filter_group) as score
-            FROM livsmedelsverket
+            SELECT *
+            FROM (
+                 SELECT *, ADV_FUZZ(?, Food_Name, Filter_group) as score
+                 FROM livsmedelsverket
+                 )
             WHERE score >= 70
             ORDER BY score DESC
             LIMIT ?
