@@ -1,7 +1,11 @@
 /LivsmedelsDB_202607110024.xlsx
 
-.idea/workspace.xml
-.idea/shelf/
-.idea/dictionaries/
-.idea/tasks.xml
-.idea/dataSources.local.xml
+.idea/
+
+!.idea/runConfigurations/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/vcs.xml
+!.idea/misc.xml
+!.idea/modules.xml
+!.idea/*.iml
