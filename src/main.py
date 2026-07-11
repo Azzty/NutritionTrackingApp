@@ -11,17 +11,17 @@ def main(page: ft.Page):
     results_view = ft.Column()
 
     def update_results(e):
-        query = input.value
+        query = search_input.value
         results = db_client.search_foods_by_name(query)
         results_view.controls = [ft.Text(value=r["Food_Name"]) for r in results]
 
-    input = ft.TextField(value="", text_align=ft.TextAlign.RIGHT, width=400, hint_text="Sök", on_change=update_results)
+    search_input = ft.TextField(value="", text_align=ft.TextAlign.RIGHT, width=400, hint_text="Sök", on_change=update_results)
 
     page.add(
         ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,
             controls = [
-                input
+                search_input
             ]
         ),
         results_view
