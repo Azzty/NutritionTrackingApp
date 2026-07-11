@@ -1,8 +1,11 @@
 import sqlite3
 import pandas as pd
+from pandas import read_excel
+
 from config import ROOT_DIR
 
-df = pd.read_excel(ROOT_DIR / "LivsmedelsDB_202607110024.xlsx", skiprows=2)
+df = pd.read_excel(ROOT_DIR / "mat_SV.xlsx", skiprows=2)
+df.columns = read_excel(ROOT_DIR / "mat_EN.xlsx", nrows=1, skiprows=2).columns
 
 df.columns = df.columns.str.replace(r"[(),]", "", regex=True)
 df.columns = df.columns.str.replace(" ", "_")
