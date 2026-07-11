@@ -13,8 +13,7 @@ def main(page: ft.Page):
     def update_results(e):
         query = input.value
         results = db_client.search_foods_by_name(query)
-        results_view.controls = [ft.Text(value=r["Livsmedelsnamn"]) for r in results]
-
+        results_view.controls = [ft.Text(value=r["Food_Name"]) for r in results]
 
     input = ft.TextField(value="", text_align=ft.TextAlign.RIGHT, width=400, hint_text="Sök", on_change=update_results)
 
