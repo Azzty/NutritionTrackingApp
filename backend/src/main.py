@@ -1,13 +1,15 @@
 import flet as ft
-import backend.src.services.livsmedelsverket_client as lmv
+import src.services.livsmedelsverket_client as lmv
 
 db_client = lmv.LivsmedelsverketClient()
+
 
 class IngredientInfoContainer(ft.Container):
     def __init__(self, ingredient: lmv.Ingredient, **kwargs):
         super().__init__(**kwargs)
         self.ingredient = ingredient
         self.content = ft.Text(value=str(self.ingredient.name))
+
 
 def main(page: ft.Page):
     page.title = "Livsmedelsverket DB search"
@@ -25,10 +27,7 @@ def main(page: ft.Page):
     detailed_ingredients_view = ft.Column()
 
     page.bottom_sheet = ft.BottomSheet(
-        content = ft.Container(
-            content=ft.Text("Ingen produkt vald."),
-            padding=20
-        )
+        content=ft.Container(content=ft.Text("Ingen produkt vald."), padding=20)
     )
 
     def _show_ingredient_nutrition(e):
@@ -53,16 +52,16 @@ def main(page: ft.Page):
                 IngredientInfoContainer(result, on_click=_show_ingredient_nutrition)
             )
 
-
-    search_input = ft.TextField(value="", text_align=ft.TextAlign.RIGHT, width=400, hint_text="Sök", on_change=_update_results)
+    search_input = ft.TextField(
+        value="",
+        text_align=ft.TextAlign.RIGHT,
+        width=400,
+        hint_text="Sök",
+        on_change=_update_results,
+    )
 
     page.add(
-        ft.Row(
-            alignment=ft.MainAxisAlignment.CENTER,
-            controls = [
-                search_input
-            ]
-        ),
+        ft.Row(alignment=ft.MainAxisAlignment.CENTER, controls=[search_input]),
         results_view,
         detailed_ingredients_view,
     )

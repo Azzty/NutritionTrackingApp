@@ -18,7 +18,7 @@ def advanced_fuzzy_match(query: str, db_name: str, db_group: str | None = None):
 
     query = unidecode(query.lower().strip())
     db_name = unidecode(db_name.lower().strip())
-    db_group = unidecode(db_group.lower().strip()) if db_group is not None else ''
+    db_group = unidecode(db_group.lower().strip()) if db_group is not None else ""
 
     query_words = query.split()
     db_name_words = set(db_name.split())
@@ -44,9 +44,16 @@ def advanced_fuzzy_match(query: str, db_name: str, db_group: str | None = None):
 
 class Ingredient:
     def __init__(
-            self, item_id: int, name: str, protein: float, fat: float,
-            carbs: float, calories: float, food_number: int | None = None,
-            groups: list | None = None, micronutrients: dict | None = None
+        self,
+        item_id: int,
+        name: str,
+        protein: float,
+        fat: float,
+        carbs: float,
+        calories: float,
+        food_number: int | None = None,
+        groups: list | None = None,
+        micronutrients: dict | None = None,
     ):
         self.id = item_id
         self.name = name
@@ -74,21 +81,35 @@ class Ingredient:
         groups = [s.strip() for s in str(data.pop("Filter_group")).split(",")]
         food_number = int(data.pop("Food_Number"))
 
-        micronutrients = {k: float(v) if v is not None else None for k, v in data.items()}
+        micronutrients = {
+            k: float(v) if v is not None else None for k, v in data.items()
+        }
 
         return Ingredient(
-            ing_id, ingredient_name, protein, fat, carbs,
-            calories, food_number=food_number, groups=groups,
-            micronutrients=micronutrients
+            ing_id,
+            ingredient_name,
+            protein,
+            fat,
+            carbs,
+            calories,
+            food_number=food_number,
+            groups=groups,
+            micronutrients=micronutrients,
         )
 
 
 class LivsmedelsverketClient:
     def __init__(self):
-        self.livsmedelsverket_conn = sqlite3.connect(ROOT_DIR / 'res/livsmedelsverket.db')
+        self.livsmedelsverket_conn = sqlite3.connect(
+            ROOT_DIR / "res/livsmedelsverket.db"
+        )
         self.livsmedelsverket_conn.row_factory = sqlite3.Row
-        self.livsmedelsverket_conn.create_function('FUZZ', 2, fuzzy_match, deterministic=True)
-        self.livsmedelsverket_conn.create_function('ADV_FUZZ', 3, advanced_fuzzy_match, deterministic=True)
+        self.livsmedelsverket_conn.create_function(
+            "FUZZ", 2, fuzzy_match, deterministic=True
+        )
+        self.livsmedelsverket_conn.create_function(
+            "ADV_FUZZ", 3, advanced_fuzzy_match, deterministic=True
+        )
 
     def get_food_by_id(self, db_id) -> Ingredient:
         with self.livsmedelsverket_conn as conn:
@@ -99,13 +120,17 @@ class LivsmedelsverketClient:
     def get_food_by_number(self, number) -> Ingredient:
         with self.livsmedelsverket_conn as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM livsmedelsverket WHERE Food_Number = ?", (number,))
+            cursor.execute(
+                "SELECT * FROM livsmedelsverket WHERE Food_Number = ?", (number,)
+            )
             return Ingredient.from_livsmedelsverket_dict(cursor.fetchone())
 
     def get_food_by_name(self, name) -> Ingredient:
         with self.livsmedelsverket_conn as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM livsmedelsverket WHERE Food_Name = ?", (name,))
+            cursor.execute(
+                "SELECT * FROM livsmedelsverket WHERE Food_Name = ?", (name,)
+            )
             return Ingredient.from_livsmedelsverket_dict(cursor.fetchone())
 
     def search_foods_by_name(self, query, limit=20) -> list[Ingredient]:
@@ -120,4 +145,6 @@ class LivsmedelsverketClient:
 
             cursor = conn.cursor()
             cursor.execute(sql, (query, limit))
-            return [Ingredient.from_livsmedelsverket_dict(row) for row in cursor.fetchall()]
+            return [
+                Ingredient.from_livsmedelsverket_dict(row) for row in cursor.fetchall()
+            ]

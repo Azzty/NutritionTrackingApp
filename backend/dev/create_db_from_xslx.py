@@ -11,7 +11,9 @@ df.columns = df.columns.str.replace(r"[(),]", "", regex=True)
 df.columns = df.columns.str.replace(" ", "_")
 df.columns = df.columns.str.replace("µ", "u")
 
-with sqlite3.connect(ROOT_DIR / 'res/Livsmedelsverket.db') as conn:
-    df.to_sql('livsmedelsverket', conn, if_exists='replace', index=True, index_label='id')
+with sqlite3.connect(ROOT_DIR / "res/Livsmedelsverket.db") as conn:
+    df.to_sql(
+        "livsmedelsverket", conn, if_exists="replace", index=True, index_label="id"
+    )
 
-print('Database created')
+print("Database created")
