@@ -1,5 +1,5 @@
 import flet as ft
-import services.livsmedelsverket_client as lmv
+import backend.src.services.livsmedelsverket_client as lmv
 
 db_client = lmv.LivsmedelsverketClient()
 
@@ -13,6 +13,13 @@ def main(page: ft.Page):
     page.title = "Livsmedelsverket DB search"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.MainAxisAlignment.CENTER
+
+    def toggle_semantics(e: ft.KeyboardEvent):
+        if e.shift and e.key == "S":
+            page.show_semantics_debugger = not page.show_semantics_debugger
+            page.update()
+
+    page.on_keyboard_event = toggle_semantics
 
     results_view = ft.Column()
     detailed_ingredients_view = ft.Column()
@@ -60,4 +67,5 @@ def main(page: ft.Page):
         detailed_ingredients_view,
     )
 
-ft.run(main)
+
+ft.run(main, view=ft.AppView.WEB_BROWSER)

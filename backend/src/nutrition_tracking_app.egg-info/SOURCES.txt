@@ -1,0 +1,11 @@
+pyproject.toml
+src/nutrition_tracking_app.egg-info/PKG-INFO
+src/nutrition_tracking_app.egg-info/SOURCES.txt
+src/nutrition_tracking_app.egg-info/dependency_links.txt
+src/nutrition_tracking_app.egg-info/requires.txt
+src/nutrition_tracking_app.egg-info/top_level.txt
+src/services/__init__.py
+src/services/food_service.py
+src/services/livsmedelsverket_client.py
+src/services/recipe_service.py
+tests/test_livsmedelsverket_service.py

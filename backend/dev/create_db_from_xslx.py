@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 from pandas import read_excel
 
-from config import ROOT_DIR
+from backend.src.config import ROOT_DIR
 
 df = pd.read_excel(ROOT_DIR / "mat_SV.xlsx", skiprows=2)
 df.columns = read_excel(ROOT_DIR / "mat_EN.xlsx", nrows=1, skiprows=2).columns

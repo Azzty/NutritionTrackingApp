@@ -1,6 +1,7 @@
 import warnings
-import src.services.livsmedelsverket_client as livsmedelsverket
+import backend.src.services.livsmedelsverket_client as livsmedelsverket
 import time
+import pytest
 
 def test_get_valid_food_number():
     client = livsmedelsverket.LivsmedelsverketClient()
