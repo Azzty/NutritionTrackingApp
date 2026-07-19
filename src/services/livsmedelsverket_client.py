@@ -1,7 +1,7 @@
 import sqlite3
 from text_unidecode import unidecode
 
-from src.config import ROOT_DIR
+from config import ROOT_DIR
 from rapidfuzz import fuzz
 
 
