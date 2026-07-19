@@ -11,3 +11,11 @@
 !.idea/*.iml
 
 __pycache__/
+
+# Secrets
+.env
+.env.local
+
+# Personal preferences
+.workspace
+.code-workspace
