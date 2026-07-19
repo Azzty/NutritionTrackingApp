@@ -17,5 +17,5 @@ __pycache__/
 .env.local
 
 # Personal preferences
-.workspace
-.code-workspace
+*.workspace
+*.code-workspace
